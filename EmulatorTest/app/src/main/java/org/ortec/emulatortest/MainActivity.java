@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,8 +22,12 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setVisibility(View.GONE);
     }
 
-    public void onButtonClick(View v) {
+    public void onClickSpinner(View v) {
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void onClickToast(View v) {
+        Toast.makeText(this, "Hallo Toast!", Toast.LENGTH_LONG).show();
     }
 
 }
