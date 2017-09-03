@@ -1,6 +1,9 @@
 package org.ortec.emulatortest;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,14 +29,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickSpinner(View v) {
+        //spinner für 10 sek starten
         mProgressBar.setVisibility(View.VISIBLE);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+
+                long ftr = System.currentTimeMillis() +10000;
+                while(System.currentTimeMillis() < ftr) {
+                    synchronized (this) {
+                        try {
+                            wait(ftr - System.currentTimeMillis());
+                        } catch(Exception ex) {
+                            int dbg = 0;
+                        }
+                    }
+                }
+                spinnerHandler.sendEmptyMessage(0);
+            }
+        };
+        Thread tr = new Thread(r);
+        tr.start();
+
     }
+
+    Handler spinnerHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+    };
 
     public void onClickToast(View v) {
         Toast.makeText(this, "Hallo Toast!", Toast.LENGTH_LONG).show();
     }
 
     public void onClickRestApiTest(View v) {
+
         Intent i = new Intent(this, RestApiTestActivity.class);
         startActivity(i);
     }
