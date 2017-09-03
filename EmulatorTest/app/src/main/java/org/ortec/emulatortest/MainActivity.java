@@ -1,5 +1,6 @@
 package org.ortec.emulatortest;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickToast(View v) {
         Toast.makeText(this, "Hallo Toast!", Toast.LENGTH_LONG).show();
+    }
+
+    public void onClickRestApiTest(View v) {
+        Intent i = new Intent(this, RestApiTestActivity.class);
+        startActivity(i);
     }
 
 }

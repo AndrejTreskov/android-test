@@ -40,4 +40,15 @@
         android:layout_marginTop="16dp"
         app:layout_constraintLeft_toRightOf="@+id/button"
         android:layout_marginLeft="16dp" />
+
+    <Button
+        android:id="@+id/buttonRestApiTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickRestApiTest"
+        android:layout_marginTop="16dp"
+        android:text="RestApi"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/buttonToast"
+        android:layout_marginLeft="16dp" />
 </android.support.constraint.ConstraintLayout>
