@@ -10,9 +10,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.ortec.emulatortest.Models.DwmServerInfo;
+import org.ortec.emulatortest.Models.RequestResultModel;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.lang.reflect.Type;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class RestApiTestActivity extends AppCompatActivity {
 
@@ -45,7 +52,8 @@ public class RestApiTestActivity extends AppCompatActivity {
                    if (myConnection.getResponseCode() == 200) {
                        InputStream responseBody = myConnection.getInputStream();
                        String value = convertStreamToString(responseBody);
-                       Message msg = msgHandler.obtainMessage(0, value);
+                       RequestResultModel<DwmServerInfo> serverInfo = getServerInfo(value);
+                       Message msg = msgHandler.obtainMessage(0, String.format("Version: %s", serverInfo.Value.Version));
                        msg.sendToTarget();
                    } else {
                        Message msg = msgHandler.obtainMessage(-2, "wrong response");
@@ -78,6 +86,14 @@ public class RestApiTestActivity extends AppCompatActivity {
         return streamString;
     }
 
+     static RequestResultModel<DwmServerInfo> getServerInfo(String json) {
+
+        Type fooType = new TypeToken<RequestResultModel<DwmServerInfo>>() {}.getType();
+        Gson gson = new Gson();
+        RequestResultModel<DwmServerInfo> result = gson.fromJson(json, fooType);
+        return result;
+
+    }
 
 
     @Override
