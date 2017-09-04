@@ -10,8 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.ortec.emulatortest.Models.DwmServerInfo;
-import org.ortec.emulatortest.Models.RequestResultModel;
+import org.ortec.emulatortest.clientServices.DwmRestService;
+import org.ortec.emulatortest.clientServices.SystemService;
+import org.ortec.emulatortest.models.DwmServerInfo;
+import org.ortec.emulatortest.models.RequestResultModel;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,64 +39,10 @@ public class RestApiTestActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.textView);
         mTextView.setVisibility(View.GONE);
 
-
-        Runnable r = new Runnable() {
-           @Override
-           public void run() {
-
-               try {
-                   URL githubEndpoint = new URL("http://system.wine-trophy.com:51572/api/system/serverInfo");
-                   // Create connection
-                   HttpURLConnection myConnection =
-                           (HttpURLConnection) githubEndpoint.openConnection();
-                   myConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
-                   myConnection.setRequestProperty("content-type","application/json; charset=utf-8");
-                   if (myConnection.getResponseCode() == 200) {
-                       InputStream responseBody = myConnection.getInputStream();
-                       String value = convertStreamToString(responseBody);
-                       RequestResultModel<DwmServerInfo> serverInfo = getServerInfo(value);
-                       Message msg = msgHandler.obtainMessage(0, String.format("Version: %s", serverInfo.Value.Version));
-                       msg.sendToTarget();
-                   } else {
-                       Message msg = msgHandler.obtainMessage(-2, "wrong response");
-                       msg.sendToTarget();
-                   }
-                   myConnection.disconnect();
-               } catch(Exception ex) {
-                   Message msg = msgHandler.obtainMessage(-1, ex.getMessage());
-                   msg.sendToTarget();
-               }
-           }
-       };
-       Thread tr = new Thread(r);
-       tr.start();
+        SystemService service = new SystemService();
+        service.getServerInfo(msgHandler, 0);
 
     }
-
-    static String convertStreamToString(java.io.InputStream is) {
-        if (is == null) {
-            return "";
-        }
-
-        java.util.Scanner s = new java.util.Scanner(is);
-        s.useDelimiter("\\A");
-
-        String streamString = s.hasNext() ? s.next() : "";
-
-        s.close();
-
-        return streamString;
-    }
-
-     static RequestResultModel<DwmServerInfo> getServerInfo(String json) {
-
-        Type fooType = new TypeToken<RequestResultModel<DwmServerInfo>>() {}.getType();
-        Gson gson = new Gson();
-        RequestResultModel<DwmServerInfo> result = gson.fromJson(json, fooType);
-        return result;
-
-    }
-
 
     @Override
     protected void onStart() {
@@ -107,17 +55,23 @@ public class RestApiTestActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             mProgressBar.setVisibility(View.GONE);
             mTextView.setVisibility(View.VISIBLE);
-            String messageText = (String)msg.obj;
-            switch(msg.what) {
-                case -1:
-                    mTextView.setText(String.format("Exception: %s", messageText));
+
+            try {
+                switch (msg.what) {
+                    case -1:
+                        mTextView.setText(String.format("Exception: %s", (String) msg.obj));
+                        break;
+                    case -2:
+                        mTextView.setText((String) msg.obj);
+                        break;
+                    case 0: {
+                        DwmServerInfo serverInfo = (DwmServerInfo) msg.obj;
+                        mTextView.setText(String.format("Server version: %s", serverInfo.Version));
+                    }
                     break;
-                case -2:
-                    mTextView.setText(messageText);
-                    break;
-                case 0:
-                    mTextView.setText(messageText);
-                    break;
+                }
+            } catch(Exception ex) {
+                mTextView.setText(String.format("Exception: %s", ex.getMessage()));
             }
         }
     };

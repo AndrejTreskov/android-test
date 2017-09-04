@@ -1,4 +1,4 @@
-package org.ortec.emulatortest.Models;
+package org.ortec.emulatortest.models;
 
 /**
  * Created by treskow on 04.09.2017.
