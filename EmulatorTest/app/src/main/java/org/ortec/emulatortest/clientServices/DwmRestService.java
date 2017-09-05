@@ -1,5 +1,8 @@
 package org.ortec.emulatortest.clientServices;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
 
@@ -23,12 +26,24 @@ public class DwmRestService {
         return "http://system.wine-trophy.com:51572";
     }
 
-    public static void getData(final String serviceUrl, final Type type, final Handler resultHandler, final int resultId) {
+    public static void getData(final Context ctx, final String serviceUrl, final Type type, final Handler resultHandler, final int resultId) {
+
+        //Internetverbindung Test
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo==null || !networkInfo.isConnectedOrConnecting()) {
+            Message msg = resultHandler.obtainMessage(-3);
+            msg.sendToTarget();
+            return;
+        }
         Runnable r = new Runnable() {
             @Override
             public void run() {
 
                 try {
+
+
+
 
                     URL githubEndpoint = new URL(String.format("%s/%s",getServerUrl(), serviceUrl));
                     // Create connection

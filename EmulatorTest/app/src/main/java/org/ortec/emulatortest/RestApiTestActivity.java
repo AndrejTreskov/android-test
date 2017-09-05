@@ -1,5 +1,7 @@
 package org.ortec.emulatortest;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -40,30 +42,18 @@ public class RestApiTestActivity extends AppCompatActivity {
         mTextView.setVisibility(View.GONE);
 
         SystemService service = new SystemService();
-        service.getServerInfo(msgHandler, 0);
+        service.getServerInfo(this, msgHandler, 0);
 
     }
 
-    @Override
-    protected void onStart() {
-        Toast.makeText(this, "OnStart", Toast.LENGTH_SHORT);
-        super.onStart();
-    }
-
-    Handler msgHandler = new Handler(Looper.getMainLooper()) {
+    RestServiceHandler msgHandler = new RestServiceHandler(this, Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             mProgressBar.setVisibility(View.GONE);
             mTextView.setVisibility(View.VISIBLE);
-
+            super.handleMessage(msg);
             try {
                 switch (msg.what) {
-                    case -1:
-                        mTextView.setText(String.format("Exception: %s", (String) msg.obj));
-                        break;
-                    case -2:
-                        mTextView.setText((String) msg.obj);
-                        break;
                     case 0: {
                         DwmServerInfo serverInfo = (DwmServerInfo) msg.obj;
                         mTextView.setText(String.format("Server version: %s", serverInfo.Version));

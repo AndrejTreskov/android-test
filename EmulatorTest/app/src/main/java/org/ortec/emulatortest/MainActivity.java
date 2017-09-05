@@ -1,6 +1,8 @@
 package org.ortec.emulatortest;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -65,9 +67,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickRestApiTest(View v) {
-
-        Intent i = new Intent(this, RestApiTestActivity.class);
-        startActivity(i);
+       Intent i = new Intent(this, RestApiTestActivity.class);
+       startActivity(i);
     }
 
     @Override

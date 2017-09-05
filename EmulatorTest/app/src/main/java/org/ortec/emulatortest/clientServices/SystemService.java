@@ -1,5 +1,6 @@
 package org.ortec.emulatortest.clientServices;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.google.gson.reflect.TypeToken;
@@ -14,10 +15,10 @@ import java.lang.reflect.Type;
  */
 
 public class SystemService extends DwmRestService {
-    public DwmServerInfo getServerInfo(Handler resultHandler, int resultId) {
+    public DwmServerInfo getServerInfo(Context ctx, Handler resultHandler, int resultId) {
         String serverUrl = "api/system/serverInfo";
         Type fooType = new TypeToken<RequestResultModel<DwmServerInfo>>() {}.getType();
-        getData(serverUrl, fooType, resultHandler, resultId);
+        getData(ctx, serverUrl, fooType, resultHandler, resultId);
         return null;
     }
 }
